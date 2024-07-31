@@ -1,0 +1,14 @@
+{
+    "type": "service_account",
+    "project_id": "nextaqua-22991",
+    "private_key_id": "fcf8de7f327b7295d4089599c15ddec664d82100",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDQtAyeD+DLyUy8\nGCboyogy6HDpjSMpeT3v0rvd9jLJugh19EdHluoT7yISkzzvsW3cLr/nb/zSE2Jr\nZpfRBOFhuKX9hpImKYMz9EssSOg+K8Vop93MVRxTQjbjA9SOYIUquZcKqhbynxGW\nJV7MJstoMS5D1vIADAb1B/GwPuPqOjc+KJpvAK1nmTPqNuL4cr4dVcddXwrnwimf\nLfnVRWBlNOafAeJ5AtXkzi2L2MKHV5loj6ei2oZmfrcSoZEeif3OLh+6q99LfiJU\n1nZnTTFypkQkfJZE9odDGT4cXL3nko8phQhYvGZPiA7fM2RfAQFm8rXRKJylPuRf\nyfvH4GOZAgMBAAECggEADL4+c8hBNmNsLaMr424gzG4oHTQvWXDvUmo20ZUezlwI\nxQSaKMmsl6fNfmTb66bIMBGKr8IrjCHMeJ8jCST+V5rDexKkcEAVcS6rCGExpqb1\ni5ZaxjplwfYUQKt5mj5UFm/BxGm7GcVf3x/l0ee5TWHALKELPB8ZenMQIG4DbJTu\nvCgIHPl2jXHUPXgUYzY4kGPzhHDHYHCjmnq2BVciYw68KYiPO4G0u7oMAz4d9cM4\nVMlJxXQNL4eZvb2OacqGYqedlASDDhLAjS/EyNFlBdr9Rd/pXSO0thk5U5hHLQSr\nzdx0ziHYX63FqXIJIwbpE6FsbUnA3KNHbbkppdEbIQKBgQD0CnyaSiMZZv2c7KAi\nnBKacqBmI8fvGJ6313OlX/MRv9f1VULA618J98IPJIhkJtbWpnX6HDCLUJDCR+fF\nnSK/oFbk81k/yl6UvrUZ8BloH/3O3Uq2IwatRIrD4ik7Wh/sJBKxmdx26d/gMYUL\nuRJBBgwtgJvvxaiGpegt3GDeowKBgQDa7j+9FewxzrwIPp4a1yRTJd1bXYzvgxWs\npFEs15BAe4defO5fOGrEacx31YVQT2+Vg91g1lYVD3tVyy4dvdZkvn/nBWxf4Fro\nLZnqmtZeTaREFynwstwuvA2KtLmGg0XacLPHygQPpSLGHhczk8/iMvxvAxPoWDVg\nbPj6ToIEkwKBgAtOIQ+Ut6OJnd4TKCfySvpUrRGOPsjYvyGNHZJfq4b6+CopVPpS\n7QgtLhQ9gQQCuJkhBP4dKDKL/OjDI/2HlgCCkQPyMgQ+f7ssSn91G/gy4zMeFUPy\nw3BraHJCm95gAnKSCTupAQmRNAnSwXMVk77nZNEG0DJ/WZtDPEpDl0k5AoGACGsQ\n2Fx3cJLaeBawTafoJapXEKRQPwVzV+gZlvfS/CfD1MZJBDBPKq5GxnTXY3cqez1O\nzeJv/O9TdsERTON30vfgQynaOPWPiU33lSXPCGFD57pcSn0WKlXgz2yTlbCGhxe+\nUfhan59h7uxJSBpu6+u5+SrNISoDI2oNSNKr/TECgYEAwpIbpAINySIY2GuVxDZs\nF9HVmF5FB25OCkHKAbUVMGQ1lV0mFr7cvaVwGKFbBR6KOGYGB6rdotQXOorBxNj9\nDp/ZTHGgkRrQiG7vSWjHkDLLlvd+7+BbwbLr9lTaTJ0gRNuRPurUY53D3ngWFgQi\no2xQ7tT7fQSueQVPH+cr8tI=\n-----END PRIVATE KEY-----\n",
+    "client_email": "firebase-adminsdk-u14a6@nextaqua-22991.iam.gserviceaccount.com",
+    "client_id": "114724040402023286535",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-u14a6%40nextaqua-22991.iam.gserviceaccount.com",
+    "universe_domain": "googleapis.com"
+  }
+  
