@@ -155,5 +155,5 @@ def update_check_tray_images_count():
         return None
 
 # Run the function
-if __name__ == '__main__':
-    update_check_tray_images_count()
+# if __name__ == '__main__':
+#    update_check_tray_images_count()
