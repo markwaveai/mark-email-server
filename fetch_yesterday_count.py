@@ -106,6 +106,7 @@ def sendCheckTrayImageEmail(total_count,yesterday_count,data,date,req):
     recipientsCC = None
     excel_attachment = None#generate_excel_file(data)
     attachemntType = None #'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    print(f"ReqData:{req}")
     if "isAttchmentReq" in req:
         excel_attachment = generate_excel_file(data)
         attachemntType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'

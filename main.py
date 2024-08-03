@@ -14,7 +14,7 @@ def send_checktrayCount_email():
     
     reqdata = request.get_json()
     response_data = fetch_yesterday_count.update_check_tray_images_count(reqdata)
-    return jsonify({"message": response_data})
+    return jsonify({"message": response_data}),200
 
 if __name__ == '__main__':
     app.run(debug=True)
