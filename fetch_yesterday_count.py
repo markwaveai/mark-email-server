@@ -102,8 +102,8 @@ def sendCheckTrayImageEmail(total_count,yesterday_count,data,date):
     <p>Best regards,<br>Backend Team</p>
     """
     # Generate Excel file
-    excel_attachment = None#generate_excel_file(data)
-    attachemntType = None#'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    excel_attachment = generate_excel_file(data)
+    attachemntType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     send_email(email_subject, email_content, ['rajesh@aquaexchange.com'],['kranthi@infiplus.xyz'],'developer@nextaqua.in','zdkc wler hovo jclu','Checktray_Image_Count_Report.xlsx',excel_attachment,attachemntType)
     #send_email(email_subject, email_content, ['pavan@aquaexchange.com','karthick@aquaexchange.com','kiran@aquaexchange.com'],['satyasri@aquaexchange.com','aditya@infiplus.xyz','rajesh@aquaexchange.com','kranthi@infiplus.xyz'],'developer@nextaqua.in','zdkc wler hovo jclu','Checktray_Image_Count_Report.xlsx',excel_attachment,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     

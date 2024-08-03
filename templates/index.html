@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checktray Image Count</title>
+    <script>
+        function sendEmail() {
+            fetch('/send_checktrayCount_email')
+                .then(response => response.json())
+                .then(data => {
+                    alert(`Response: ${JSON.stringify(data)}`);
+                })
+                .catch(error => {
+                    alert('Error: ' + error);
+                });
+        }
+    </script>
+</head>
+<body>
+    <h1>Checktray Image Count Report</h1>
+    <button onclick="sendEmail()">Send Email</button>
+</body>
+</html>
