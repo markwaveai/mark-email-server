@@ -6,14 +6,27 @@
     <title>Checktray Image Count</title>
     <script>
         function sendEmail() {
-            fetch('/send_checktrayCount_email')
-                .then(response => response.json())
-                .then(data => {
-                    alert(`Response: ${JSON.stringify(data)}`);
-                })
-                .catch(error => {
-                    alert('Error: ' + error);
-                });
+            const data = {
+                // Add your JSON data here
+                "isAttchmentReq":true,
+                "recipients":['rajesh@aquaexchange.com'],
+                "recipientsCC" : ['rajesh@aquaexchange.com']
+            };
+
+            fetch('/send_checktrayCount_email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(`Response: ${JSON.stringify(data)}`);
+            })
+            .catch(error => {
+                alert('Error: ' + error);
+            });
         }
     </script>
 </head>

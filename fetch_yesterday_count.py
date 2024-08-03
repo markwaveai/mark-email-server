@@ -92,7 +92,7 @@ def generate_excel_file(data):
         df.to_excel(writer, index=False, sheet_name='Counts')
     excel_file.seek(0)
     return excel_file.read()
-def sendCheckTrayImageEmail(total_count,yesterday_count,data,date):
+def sendCheckTrayImageEmail(total_count,yesterday_count,data,date,req):
     email_subject = f"Checktray Image Count Report: Total {total_count} as of {get_formatted_date(date)}"
     get_formatted_date
     
@@ -102,9 +102,19 @@ def sendCheckTrayImageEmail(total_count,yesterday_count,data,date):
     <p>Best regards,<br>Backend Team</p>
     """
     # Generate Excel file
-    excel_attachment = generate_excel_file(data)
-    attachemntType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    send_email(email_subject, email_content, ['rajesh@aquaexchange.com'],['kranthi@infiplus.xyz'],'developer@nextaqua.in','zdkc wler hovo jclu','Checktray_Image_Count_Report.xlsx',excel_attachment,attachemntType)
+    recipients = []
+    recipientsCC = None
+    excel_attachment = None#generate_excel_file(data)
+    attachemntType = None #'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    if "isAttchmentReq" in req:
+        excel_attachment = generate_excel_file(data)
+        attachemntType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    if "recipientsCC" in req:
+        recipientsCC = req.get('recipientsCC')
+    if "recipients" in req:
+        recipients = req.get('recipients')
+
+    send_email(email_subject, email_content, recipients,recipientsCC,'developer@nextaqua.in','zdkc wler hovo jclu','Checktray_Image_Count_Report.xlsx',excel_attachment,attachemntType)
     #send_email(email_subject, email_content, ['pavan@aquaexchange.com','karthick@aquaexchange.com','kiran@aquaexchange.com'],['satyasri@aquaexchange.com','aditya@infiplus.xyz','rajesh@aquaexchange.com','kranthi@infiplus.xyz'],'developer@nextaqua.in','zdkc wler hovo jclu','Checktray_Image_Count_Report.xlsx',excel_attachment,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     
 def fetch_images(bucket_name, prefix):
@@ -121,7 +131,7 @@ def fetch_images(bucket_name, prefix):
         logging.error(f"Error fetching images for prefix {prefix}:", exc_info=True)
         return {'totalCount': 0}
 
-def update_check_tray_images_count():
+def update_check_tray_images_count(req):
     bucket_name = 'checktray-ml'
     str_date = get_date_string()
     try:
@@ -145,7 +155,7 @@ def update_check_tray_images_count():
            totalCount = responsedata["total_count"]
            yesterdayCount = responsedata["yesterday_count"]
            #prepare Message body
-           sendCheckTrayImageEmail(totalCount,yesterdayCount,responsedata['data'],str_date) 
+           sendCheckTrayImageEmail(totalCount,yesterdayCount,responsedata['data'],str_date,req) 
            return data
         else:
            logging.error(f'Failed to update checktray images count in Jango. Status code: {response.status_code}')
