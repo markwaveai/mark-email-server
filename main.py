@@ -13,6 +13,7 @@ def send_checktrayCount_email():
         return jsonify({"error": "Request body must be JSON"}), 400
     
     reqdata = request.get_json()
+    
     response_data = fetch_yesterday_count.update_check_tray_images_count(reqdata)
     return jsonify({"message": response_data}),200
 
