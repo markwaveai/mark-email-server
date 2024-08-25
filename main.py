@@ -17,5 +17,12 @@ def send_checktrayCount_email():
     response_data = fetch_yesterday_count.update_check_tray_images_count(reqdata)
     return jsonify({"message": response_data}),200
 
+@app.route('/notify_day_feed_bubble', methods=['POST'])
+def notifyDayFeedBubble():
+    if not request.is_json:
+        return jsonify({"error": "Request body must be JSON"}), 400
+    reqdata = request.get_json()
+    return jsonify({"message":"success"}),200
+
 if __name__ == '__main__':
     app.run(debug=True)

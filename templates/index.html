@@ -28,10 +28,30 @@
                 alert('Error: ' + error);
             });
         }
+        function notifyDayFeedBubble(siteIds) {
+            const data = ["TES1908246363FY24C3"];
+
+            fetch('/notify_day_feed_bubble', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(`Response: ${JSON.stringify(data)}`);
+            })
+            .catch(error => {
+                alert('Error: ' + error);
+            });
+        }
     </script>
 </head>
 <body>
     <h1>Checktray Image Count Report</h1>
     <button onclick="sendEmail()">Send Email</button>
+    <h1>Send Day FeedBubble</h1>
+    <button onclick="notifyDayFeedBubble()">Notify Day Feed Bubble</button>
 </body>
 </html>

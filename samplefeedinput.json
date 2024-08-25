@@ -1,0 +1,89 @@
+
+{
+  "uid": "8686046444",
+  "senderName": "Pavan",
+  "updatedBy": "Pavan",
+  "tableMode": "smartScale",
+  "updatedAt": 1724597797451,
+  "tabledata": [
+    {
+      "mealdata": [
+        {
+          "meal": 33,
+          "type": "Manual",
+          "mealType": "M1",
+          "time": 1724583600000
+        }
+      ],
+      "totalMeal": 33,
+      "farm": "TES1908246363FY24C3",
+      "id": "50180",
+      "name": "P11"
+    },
+    {
+      "mealdata": [
+        {
+          "meal": 11,
+          "type": "Manual",
+          "mealType": "M1",
+          "time": 1724583600000
+        }
+      ],
+      "totalMeal": 11,
+      "farm": "TES1908246363FY24C3",
+      "id": "50181",
+      "name": "P12"
+    },
+    {
+      "mealdata": [
+        {
+          "meal": 16,
+          "type": "Manual",
+          "mealType": "M1",
+          "time": 1724583600000
+        }
+      ],
+      "totalMeal": 16,
+      "farm": "TES1908246363FY24C3",
+      "id": "50182",
+      "name": "P13"
+    },
+    {
+      "mealdata": [
+        {
+          "meal": 23.5,
+          "type": "Manual",
+          "mealType": "M1",
+          "time": 1724583600000
+        }
+      ],
+      "totalMeal": 23.5,
+      "farm": "TES1908246363FY24C3",
+      "id": "50183",
+      "name": "P14"
+    },
+    {
+      "mealdata": [
+        {
+          "meal": 3,
+          "type": "Manual",
+          "mealType": "M1",
+          "time": 1724583600000
+        }
+      ],
+      "totalMeal": 3,
+      "farm": "TES1908246363FY24C3",
+      "id": "50184",
+      "name": "P15"
+    }
+  ],
+  "text": "",
+  "sender_role": "1",
+  "time": 1724524200000,
+  "appVersion": 2.16,
+  "tableType": "feedtable",
+  "read": true,
+  "timestamp": 1724597797451,
+  "senderImgUrl": "",
+  "senderPhotoUrl": ""
+}
