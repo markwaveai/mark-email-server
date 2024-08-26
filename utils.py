@@ -31,7 +31,7 @@ def get_day_start_end_epoch_in_ist(date_str, date_format="%d-%m-%Y"):
     end_epoch = int(end_date.timestamp() * 1000)
     return start_epoch, end_epoch
 
-def get_date_time_ist(timeStamp, input_format='%d-%m-%Y %H:%M:%S', with_ist_timezone=True):
+def get_date_time_ist(timeStamp, output_format='%d-%m-%Y %H:%M:%S', with_ist_timezone=True):
     # Define IST timezone
     IST = timezone(timedelta(hours=5, minutes=30))
     if with_ist_timezone:
@@ -41,7 +41,7 @@ def get_date_time_ist(timeStamp, input_format='%d-%m-%Y %H:%M:%S', with_ist_time
         # Convert the timestamp to a naive datetime object (without timezone)
         date_obj = datetime.fromtimestamp(timeStamp / 1000)
     # Return the formatted date and time string
-    return date_obj.strftime(input_format)
+    return date_obj.strftime(output_format)
 def get_epoch_time():
     return int(datetime.now().timestamp() * 1000)
 def get_epoch_time_7pm():
@@ -53,6 +53,14 @@ def get_epoch_time_7pm():
     epoch_time_7pm = int(seven_pm_today.timestamp() * 1000)
     
     return epoch_time_7pm
+def check_epoch_isToday(epoch):
+    # Convert the epoch to a datetime object
+    date_time = datetime.fromtimestamp(epoch)
+    # Get today's date
+    today = datetime.today()
+    # Check if the date of the epoch matches today's date
+    return date_time.date() == today.date()
+
     
                  
 class TableTypes(Enum):
