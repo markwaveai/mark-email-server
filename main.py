@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, render_template, request
 import fetch_yesterday_count
-import updatefeedbubbles
+# import updatefeedbubbles
 
 app = Flask(__name__)
 
@@ -18,10 +18,10 @@ def send_checktrayCount_email():
     response_data = fetch_yesterday_count.update_check_tray_images_count(reqdata)
     return jsonify({"message": response_data}),200
 
-@app.route('/notify_day_feed_bubble', methods=['POST'])
-def notifyDayFeedBubble():
-    print("calling...notifyDayFeedBubble")
-    return jsonify({"success"}),200
+# @app.route('/notify_day_feed_bubble', methods=['POST'])
+# def notifyDayFeedBubble():
+#     print("calling...notifyDayFeedBubble")
+#     return jsonify({"success"}),200
     # if not request.is_json:
     #     return jsonify({"error": "Request body must be JSON"}), 400
     # reqdata = request.get_json()
