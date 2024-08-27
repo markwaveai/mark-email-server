@@ -4,7 +4,7 @@ import json
 from google.cloud import firestore
 import os
 from google.cloud.firestore_v1 import FieldFilter
-import utils
+import apputils
 import constants as cts
 # Path to your service account key file
 service_account_key_path = 'nextaqua-firestore-key.json'
@@ -66,7 +66,7 @@ def getCurrentCropId(pondId,checktrayData):
 
 def sendBubbleMessage(siteId, messageData):
     # Prepare bubble message
-    bubbleId = utils.get_epoch_time_7pm()
+    bubbleId = apputils.get_epoch_time_7pm()
     destPath = f'nextfarm_data/{siteId}/allcrops/messages/data/{bubbleId}'
     try:
         # Attempt to set the document
@@ -79,7 +79,7 @@ def sendBubbleMessage(siteId, messageData):
         return False
 def sendAllBubblesToTestCollection(siteId, messageData):
     # Prepare bubble message
-    bubbleId = utils.get_epoch_time_7pm()
+    bubbleId = apputils.get_epoch_time_7pm()
     destPath = f'dayfeedtesting/alllsites/feedbubbles4/{siteId}/data/{bubbleId}'
     try:
         # Attempt to set the document
@@ -126,7 +126,7 @@ def fillOtherFeedSourcesData(siteId,tableData,chkDoc):
     #fetch All Feed bubbles from smartscale
     feedCollectionPath = f"nextfarm_data/{siteId}/allcrops/messages/data"
     feedcollection_ref = db.collection(feedCollectionPath)
-    day_start_epoch,day_end_epoch = utils.get_day_start_end_epoch(utils.get_today_date_string())
+    day_start_epoch,day_end_epoch = apputils.get_day_start_end_epoch(apputils.get_today_date_string())
     feedBubbles = feedcollection_ref.where(filter=FieldFilter("tableType", "==", "feedtable")) \
                                     .where(filter=FieldFilter("time", ">=", day_start_epoch)) \
                                     .where(filter=FieldFilter("time", "<=", day_end_epoch)).get()
@@ -210,7 +210,7 @@ def fillStaticFeederData(siteId,tableData,chkDoc,iotdevices):
            deviceId = staticfeeders[0]
            devicedata = af_calibration_data.get(deviceId,{})
            epoch = devicedata.get('lut',1000)
-           isToday = utils.check_epoch_isToday(epoch)
+           isToday = apputils.check_epoch_isToday(epoch)
            if isToday:
               for actPond in tableData:
                   if str(actPond[cts.kax_pond_id]) == str(devicePondID):
@@ -280,12 +280,12 @@ def prepareBubble(siteId,tableData,chkDocData):
         #fillFinal Feed
         tabledata=fillFinalFeed(tableData)
         return {
-            "tableType": utils.TableTypes.DAY_FEED_TABLE.value,
+            "tableType": apputils.TableTypes.DAY_FEED_TABLE.value,
             "tabledata": tabledata,
-            "sentTime": utils.get_today_date_time_in_ist(),
-            "time": utils.get_epoch_time(),
-            "timeStamp": utils.get_epoch_time(),
-            "uid": str(utils.get_epoch_time()),
+            "sentTime": apputils.get_today_date_time_in_ist(),
+            "time": apputils.get_epoch_time(),
+            "timeStamp": apputils.get_epoch_time(),
+            "uid": str(apputils.get_epoch_time()),
             "senderName": "Aquaexchange"
         }
     else:
