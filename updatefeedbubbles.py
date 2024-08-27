@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 import requests
-import logging
 import json
 from google.cloud import firestore
 import os
@@ -54,7 +53,7 @@ def fetchChecktrayDocument(siteId):
     docPath = f'checktraydata/{siteId}'
     checktray_doc = db.document(docPath).get()
     if not checktray_doc.exists:
-        logging.error(f'No such checktray document: {docPath}')
+        print(f'No such checktray document: {docPath}')
         return
     return checktray_doc.to_dict()
 
@@ -290,7 +289,7 @@ def prepareBubble(siteId,tableData,chkDocData):
             "senderName": "Aquaexchange"
         }
     else:
-        logging.error(f'Not able to prepare feed data for: {siteId}')
+        print(f'Not able to prepare feed data for: {siteId}')
         return None
 def notifyFeedBubbleForSite(siteId):
     #get Feed bubble for today, read it from feed collection
@@ -304,7 +303,7 @@ def notifyFeedBubbleForSite(siteId):
           #sendBubbleMessage(siteId,bubbleData)
            sendAllBubblesToTestCollection(siteId,bubbleData)
     except Exception as e:
-           logging.error(f'Error occurred while fetching feed data for site: {siteId}, Error: {str(e)}')
+           print(f'Error occurred while fetching feed data for site: {siteId}, Error: {str(e)}')
            return f"failed to send feed data for site: {siteId}"
     return f"success in sending feed data for site: {siteId}"
 
