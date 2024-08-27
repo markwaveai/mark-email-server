@@ -81,7 +81,7 @@ def sendBubbleMessage(siteId, messageData):
 def sendAllBubblesToTestCollection(siteId, messageData):
     # Prepare bubble message
     bubbleId = utils.get_epoch_time_7pm()
-    destPath = f'dayfeedtesting/alllsites/feedbubbles/{siteId}/data/{bubbleId}'
+    destPath = f'dayfeedtesting/alllsites/feedbubbles4/{siteId}/data/{bubbleId}'
     try:
         # Attempt to set the document
         db.document(destPath).set(messageData)

@@ -4,4 +4,6 @@ requests
 google-cloud-storage
 pandas
 openpyxl
+logging
+google-cloud-firestore
 
