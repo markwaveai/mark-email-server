@@ -81,7 +81,7 @@ def sendBubbleMessage(siteId, messageData):
 def sendAllBubblesToTestCollection(siteId, messageData):
     # Prepare bubble message
     bubbleId = utils.get_epoch_time_7pm()
-    destPath = f'dayfeedtesting/{siteId}/data/{bubbleId}'
+    destPath = f'dayfeedtesting/alllsites/feedbubbles/{siteId}/data/{bubbleId}'
     try:
         # Attempt to set the document
         db.document(destPath).set(messageData)
@@ -292,16 +292,21 @@ def prepareBubble(siteId,tableData,chkDocData):
     else:
         logging.error(f'Not able to prepare feed data for: {siteId}')
         return None
-def getFeedBubble(siteId):
+def notifyFeedBubbleForSite(siteId):
     #get Feed bubble for today, read it from feed collection
-    chkDoc = fetchChecktrayDocument(siteId)
-    #prepare table here for current crop
-    tabledata = []
-    if chkDoc:
-       tabledata = prepareTablePondsMetaData(chkDoc)
-       bubbleData = prepareBubble(siteId,tabledata,chkDoc)
-       #sendBubbleMessage(siteId,bubbleData)
-       sendAllBubblesToTestCollection(siteId,bubbleData)
+    try:
+        chkDoc = fetchChecktrayDocument(siteId)
+        #prepare table here for current crop
+        tabledata = []
+        if chkDoc:
+           tabledata = prepareTablePondsMetaData(chkDoc)
+           bubbleData = prepareBubble(siteId,tabledata,chkDoc)
+          #sendBubbleMessage(siteId,bubbleData)
+           sendAllBubblesToTestCollection(siteId,bubbleData)
+    except Exception as e:
+           logging.error(f'Error occurred while fetching feed data for site: {siteId}, Error: {str(e)}')
+           return f"failed to send feed data for site: {siteId}"
+    return f"success in sending feed data for site: {siteId}"
 
 # def getFeedBubble(siteId):
 #     #get Feed bubble for today, read it from feed collection

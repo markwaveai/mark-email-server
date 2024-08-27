@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, render_template, request
 import fetch_yesterday_count
+import updatefeedbubbles
 
 app = Flask(__name__)
 
@@ -22,7 +23,11 @@ def notifyDayFeedBubble():
     if not request.is_json:
         return jsonify({"error": "Request body must be JSON"}), 400
     reqdata = request.get_json()
-    return jsonify({"message":"success"}),200
+    response = {}
+    for site in reqdata:
+        result = updatefeedbubbles.notifyFeedBubbleForSite(site)
+        response[site] = result
+    return jsonify(response),200
 
 if __name__ == '__main__':
     app.run(debug=True)
