@@ -20,14 +20,16 @@ def send_checktrayCount_email():
 
 @app.route('/notify_day_feed_bubble', methods=['POST'])
 def notifyDayFeedBubble():
-    if not request.is_json:
-        return jsonify({"error": "Request body must be JSON"}), 400
-    reqdata = request.get_json()
-    response = {}
-    for site in reqdata:
-        result = updatefeedbubbles.notifyFeedBubbleForSite(site)
-        response[site] = result
-    return jsonify(response),200
+    print("calling...notifyDayFeedBubble")
+    return jsonify({"success"}),200
+    # if not request.is_json:
+    #     return jsonify({"error": "Request body must be JSON"}), 400
+    # reqdata = request.get_json()
+    # response = {}
+    # for site in reqdata:
+    #     result = updatefeedbubbles.notifyFeedBubbleForSite(site)
+    #     response[site] = result
+    # return jsonify(response),200
 
 if __name__ == '__main__':
     app.run(debug=True)
