@@ -78,6 +78,19 @@ def sendBubbleMessage(siteId, messageData):
         # Handle any errors that occur
         print(f"An error occurred: {e}")
         return False
+def sendAllBubblesToTestCollection(siteId, messageData):
+    # Prepare bubble message
+    bubbleId = utils.get_epoch_time_7pm()
+    destPath = f'dayfeedtesting/{siteId}/data/{bubbleId}'
+    try:
+        # Attempt to set the document
+        db.document(destPath).set(messageData)
+        print(f"bubble sent successfully...{destPath}")
+        return True
+    except Exception as e:
+        # Handle any errors that occur
+        print(f"An error occurred: {e}")
+        return False
 def fetchCurrentCrop(pond):
     crops = pond.get('crops',[])
     currentCropId = pond.get('currentCrop',None)
@@ -107,61 +120,73 @@ def getPondDataFromTable(pondid,tableData):
     for pond in tableData:
         if str(pond.get(cts.kax_pond_id, '')) == str(pondid):
            return pond
-    return None
+    return {}
 
 #fill Manual, SmartScale, Aquabot
 def fillOtherFeedSourcesData(siteId,tableData,chkDoc):
     #fetch All Feed bubbles from smartscale
     feedCollectionPath = f"nextfarm_data/{siteId}/allcrops/messages/data"
     feedcollection_ref = db.collection(feedCollectionPath)
-    day_start_epoch,day_end_epoch = utils.get_day_start_end_epoch_in_ist(utils.get_today_date_string_in_ist())
+    day_start_epoch,day_end_epoch = utils.get_day_start_end_epoch(utils.get_today_date_string())
     feedBubbles = feedcollection_ref.where(filter=FieldFilter("tableType", "==", "feedtable")) \
                                     .where(filter=FieldFilter("time", ">=", day_start_epoch)) \
                                     .where(filter=FieldFilter("time", "<=", day_end_epoch)).get()
+    # print("identified buubles")
+    for feedBubble in feedBubbles:
+        print(feedBubble.id)
     for feedbubble in feedBubbles:
         feedData = feedbubble.to_dict()
+        dataFrom = None
+        if "dataFrom" in feedData:
+            dataFrom = feedData.get("dataFrom", None)
         feedtabledata = feedData.get("tabledata",[])
         for pondfeed in feedtabledata:
             mealdata = pondfeed.get("mealdata",{})
-            ax_pond_id = str(pondfeed.get(cts.kax_pond_id,""))
+            ax_pond_id = pondfeed.get(cts.kax_pond_id,None)
+            if ax_pond_id==None:
+               ax_pond_id = str(pondfeed.get('id',''))
+            ax_pond_id = str(ax_pond_id)
             meal = mealdata.get("meal",0)
             type = mealdata.get("type","")
             mealType = mealdata.get("mealType","")
             #get existing pond from tabledata
             ponddata = getPondDataFromTable(ax_pond_id,tableData)
             pondmeals = ponddata.get("meals",[])
+            if len(pondmeals)==0:
+               ponddata[cts.kmeals] = pondmeals
             pondmeal = {
                 "meal": meal,
                 "mealType": mealType,
             }
-            if len(pondmeals)==0:
-               ponddata[cts.kmeals] = pondmeals
-              
-            if type.lower() == "manual" or type.lower() == "checktray":
+            pondmeals.append(pondmeal)
+            type = type.lower()
+            if dataFrom and dataFrom.lower()=="smartscale":
+                type = dataFrom.lower()
+
+            meal = round(float(meal),2)
+            if type == "manual" or type == "checktray" or type == "":
                manualfeed = ponddata.get(cts.kmanual_feed,0)
                manualfeed += meal
                ponddata[cts.kmanual_feed] = manualfeed
                pondmeal[cts.kdataFrom] = "manual"
-               print("manual data found")
-            elif type.lower() == "smartscale":
+               print(f"Pond::{ax_pond_id} manual data found::{manualfeed}")
+            elif type == "smartscale":
                  smartscalefeed = ponddata.get(cts.ksmartscale_feed,0)
-                 smartscalefeed += meal
+                 #get verified feed
+                 feed_verified = mealdata.get("feed_verified",0)
+                 smartscalefeed += round(float(feed_verified),2)
                  ponddata[cts.ksmartscale_feed] = smartscalefeed
                  pondmeal[cts.kdataFrom] = "smartScale"
-                 print("smartscale data found")                
-            elif type.lower() == "aquabot": 
+                 print(f"smartscale data found::{smartscalefeed}")                
+            elif type == "aquabot": 
                   aquabotfeed = ponddata.get(cts.kaquabot_feed,0)
                   aquabotfeed += meal
-                  ponddata[cts.kaquabot_feed] = smartscalefeed
+                  ponddata[cts.kaquabot_feed] = aquabotfeed
                   pondmeal[cts.kdataFrom] = "aquabot"
-                  print("aquabot data found")
+                  print(f"aquabot data found::{aquabotfeed}")
             else:
                 print(f"Unknown feed type: {type}")
                 
-            
-
-        
-
     return tableData
 
 
@@ -182,7 +207,7 @@ def fillStaticFeederData(siteId,tableData,chkDoc,iotdevices):
     for ponddevices in iotdevices:
         staticfeeders = ponddevices.get('feeder_device_ids',[])
         devicePondID = ponddevices.get('pond_id','')
-        if len(staticfeeders)>0:
+        if len(staticfeeders) > 0:
            deviceId = staticfeeders[0]
            devicedata = af_calibration_data.get(deviceId,{})
            epoch = devicedata.get('lut',1000)
@@ -191,7 +216,7 @@ def fillStaticFeederData(siteId,tableData,chkDoc,iotdevices):
               for actPond in tableData:
                   if str(actPond[cts.kax_pond_id]) == str(devicePondID):
                       todayfeed = devicedata.get('todayFeed',0)
-                      actPond[cts.kstaticfeeder_feed] = todayfeed
+                      actPond[cts.kstaticfeeder_feed] = round(float(todayfeed),2)
                       meals = actPond.get(cts.kmeals,[])
                       if len(meals) == 0:
                           actPond[cts.kmeals] = meals
@@ -204,8 +229,7 @@ def fillStaticFeederData(siteId,tableData,chkDoc,iotdevices):
 
     return tableData
 
-def insertFeedData(siteId,tableData,chkDoc):
-    fillOtherFeedSourcesData(siteId,tableData,chkDoc)
+def insertStaticFeederFeedData(siteId,tableData,chkDoc):
     iotdevices = fetch_iot_devices(siteId)
     #smartScalesInSiteIdentified = False
     statisFeederIdentified = False
@@ -224,9 +248,38 @@ def insertFeedData(siteId,tableData,chkDoc):
     
 
     return tableData
+def fillFinalFeed(tableData):
+    for pondmeal in tableData:
+        feed_smartscale = 0
+        if cts.ksmartscale_feed in pondmeal:
+            feed_smartscale = pondmeal[cts.ksmartscale_feed]
+        feed_aquabot = 0
+        if cts.kaquabot_feed in pondmeal:
+            feed_aquabot = pondmeal[cts.kaquabot_feed]
+        feed_staticfeeder = 0
+        if cts.kstaticfeeder_feed in pondmeal:
+            feed_staticfeeder = pondmeal[cts.kstaticfeeder_feed]
+        manualfeed = 0
+        if cts.kmanual_feed in pondmeal:
+           manualfeed = pondmeal[cts.kmanual_feed]
+
+        if feed_smartscale>0:
+           pondmeal[cts.kfinal_feed] = feed_smartscale
+        elif feed_staticfeeder>0:
+            pondmeal[cts.kfinal_feed] = feed_staticfeeder
+        elif feed_aquabot>0:
+            pondmeal[cts.kfinal_feed] = feed_aquabot
+        else:
+            pondmeal[cts.kfinal_feed] = manualfeed
+
+    return tableData
+
 def prepareBubble(siteId,tableData,chkDocData):
     if len(tableData) > 0:
-        tabledata = insertFeedData(siteId,tableData,chkDocData)
+        tabledata = fillOtherFeedSourcesData(siteId,tableData,chkDocData)
+        tabledata = insertStaticFeederFeedData(siteId,tableData,chkDocData)
+        #fillFinal Feed
+        tabledata=fillFinalFeed(tableData)
         return {
             "tableType": utils.TableTypes.DAY_FEED_TABLE.value,
             "tabledata": tabledata,
@@ -234,7 +287,7 @@ def prepareBubble(siteId,tableData,chkDocData):
             "time": utils.get_epoch_time(),
             "timeStamp": utils.get_epoch_time(),
             "uid": str(utils.get_epoch_time()),
-            "senderName": "server"
+            "senderName": "Aquaexchange"
         }
     else:
         logging.error(f'Not able to prepare feed data for: {siteId}')
@@ -247,7 +300,8 @@ def getFeedBubble(siteId):
     if chkDoc:
        tabledata = prepareTablePondsMetaData(chkDoc)
        bubbleData = prepareBubble(siteId,tabledata,chkDoc)
-       sendBubbleMessage(siteId,bubbleData)
+       #sendBubbleMessage(siteId,bubbleData)
+       sendAllBubblesToTestCollection(siteId,bubbleData)
 
 # def getFeedBubble(siteId):
 #     #get Feed bubble for today, read it from feed collection
@@ -268,6 +322,10 @@ def getFeedBubble(siteId):
 #             return None
 #SAF308232051
 #Test case one ESE2007245662A24
-getFeedBubble("SAF308232051")
+#getFeedBubble("SAF308232051")
+#getFeedBubble("19A1908249824FY24C3")
 #getFeedBubble("TES1908246363FY24C3")
-
+#test for few sites
+# sites = ["AXC2507247563A24","AXC2507244576A24","DSE2007242348A24","ESE2007245662A24"]
+# for site in sites:
+#     getFeedBubble(site)

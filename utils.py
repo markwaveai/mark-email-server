@@ -18,6 +18,10 @@ def get_today_date_string_in_ist(out_put_format='%d-%m-%Y'):
     today = datetime.now(timezone)
     return today.strftime(out_put_format)
 
+def get_today_date_string(out_put_format='%d-%m-%Y'):
+    today = datetime.now()
+    return today.strftime(out_put_format)
+
 def get_today_date_time_in_ist(out_put_format='%d-%m-%Y %H:%M:%S'):
     timezone = pytz.timezone('Asia/Kolkata')
     today = datetime.now(timezone)
@@ -27,6 +31,16 @@ def get_day_start_end_epoch_in_ist(date_str, date_format="%d-%m-%Y"):
     IST = timezone(timedelta(hours=5, minutes=30))
     start_date = datetime.strptime(date_str, date_format).replace(tzinfo=IST)
     start_epoch = int(start_date.timestamp() * 1000)
+    end_date = start_date + timedelta(days=1) - timedelta(seconds=1)
+    end_epoch = int(end_date.timestamp() * 1000)
+    return start_epoch, end_epoch
+
+def get_day_start_end_epoch(date_str, date_format="%d-%m-%Y"):
+    # Parse the input date
+    start_date = datetime.strptime(date_str, date_format)
+    # Calculate the start of the day at 00:00:00 AM
+    start_epoch = int(start_date.timestamp() * 1000)
+    # Calculate the end of the day at 23:59:59 PM
     end_date = start_date + timedelta(days=1) - timedelta(seconds=1)
     end_epoch = int(end_date.timestamp() * 1000)
     return start_epoch, end_epoch
