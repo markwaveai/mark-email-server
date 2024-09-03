@@ -115,7 +115,7 @@ def sendCheckTrayImageEmail(total_count,yesterday_count,data,date,req):
     if "recipients" in req:
         recipients = req.get('recipients')
 
-    send_email(email_subject, email_content, recipients,recipientsCC,'developer@nextaqua.in','zdkc wler hovo jclu','Checktray_Image_Count_Report.xlsx',excel_attachment,attachemntType)
+    send_email(email_subject, email_content, recipients,recipientsCC,'developer@nextaqua.in','fjdt wirm nonk ddvm','Checktray_Image_Count_Report.xlsx',excel_attachment,attachemntType)
     #send_email(email_subject, email_content, ['pavan@aquaexchange.com','karthick@aquaexchange.com','kiran@aquaexchange.com'],['satyasri@aquaexchange.com','aditya@infiplus.xyz','rajesh@aquaexchange.com','kranthi@infiplus.xyz'],'developer@nextaqua.in','zdkc wler hovo jclu','Checktray_Image_Count_Report.xlsx',excel_attachment,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     
 def fetch_images(bucket_name, prefix):
