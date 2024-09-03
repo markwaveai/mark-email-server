@@ -39,9 +39,9 @@ def send_email(subject, body, to_emails, cc_emails=None, from_email=None, appPas
         text = msg.as_string()
         server.sendmail(from_email, to_emails, text)
         server.quit()
-        return "Email sent successfully"
+        return "Email sent successfully", True
     except Exception as e:
-        return f"Failed to send email: {e}"
+        return f"Failed to send email: {e}", False
 
 @app.route('/send_email', methods=['POST'])
 def api_send_email():

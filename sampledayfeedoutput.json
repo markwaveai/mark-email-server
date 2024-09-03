@@ -4,43 +4,45 @@
   "tableType": "dayfeedtable",
   "tabledata": [
     {
-        "id": "",
+        "crop_id": "",   
         "name": "",
-        "ax_pond_id": "",
-        "crop_id": "",        
-        "meals": [
-            {
-                "meal": 0,
-                "mealType": "M1",
-                "mealUpdatedTime": "",
-                "dataFrom": "smartScale"
-            }
-        ],
+        "ax_pond_id":"",
+        "id": "",   
         "manual_feed": 0,
         "smartscale_feed": 0,
         "staticfeeder_feed": 0,
         "aquabot_feed": 0,
-        "final_feed": 0
-    },
-    {
-        "id": "",
-        "name": "",
-        "ax_pond_id": "",
-        "crop_id": "",        
-        "meals": [
-            {
-                "meal": 30,
-                "mealType": "",
-                "mealUpdatedTime": "",
-                "dataFrom": "staticFeeder"
-            }
-        ],
-        "manual_feed": 0,
-        "smartscale_feed": 0,
-        "staticfeeder_feed": 0,
-        "aquabot_feed": 0,
-        "final_feed": 0
+        "final_feed": 0,
+        "meals": {
+            "M1": [
+                {
+                    "meal": 0,
+                    "verified_feed":0,
+                    "dataFrom": "smartScale"
+                },
+                {
+                    "meal": 0,
+                    "dataFrom": "manual"
+                },
+                {
+                    "meal": 0,
+                    "weightToDisburse":0,
+                    "dataFrom": "aquabot"
+                }
+            ],
+            "NM": [
+                {
+                    "meal": 0,
+                    "dataFrom": "staticfeeder"
+                }
+            ]
+        }
     }
-
-  ]
+            
+   ]
+  
 }
+  
+  
+  
+    
