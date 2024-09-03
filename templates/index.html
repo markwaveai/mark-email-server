@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checktray Image Count</title>
     <script>
-        function sendEmail() {
+        function sendSampleCheckTrayCountEmail() {
             const data = {
                 // Add your JSON data here
                 "isAttchmentReq":true,
@@ -14,6 +14,29 @@
             };
 
             fetch('/send_checktrayCount_email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(`Response: ${JSON.stringify(data)}`);
+            })
+            .catch(error => {
+                alert('Error: ' + error);
+            });
+        }
+        function send_sample_email_by_subject_body_attachment() {
+            const data = {
+               "subject":"",
+                "msgbody":"",
+                "to_emails":['rajesh@aquaexchange.com'],
+                "cc_emails" : ['rajesh@aquaexchange.com']
+            };
+
+            fetch('/send_email_by_subject_body_attachment', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -50,8 +73,10 @@
 </head>
 <body>
     <h1>Checktray Image Count Report</h1>
-    <button onclick="sendEmail()">Send Email</button>
-    <h1>Send Day FeedBubble</h1>
-    <button onclick="notifyDayFeedBubble()">Notify Day Feed Bubble</button>
+    <button onclick="sendSampleCheckTrayCountEmail()">Send Email</button>
+    <!-- <h1>Send Day FeedBubble</h1>
+    <button onclick="notifyDayFeedBubble()">Notify Day Feed Bubble</button> -->
+    <h1>Send Sample Email by subject and Body</h1>
+    <button onclick="send_sample_email_by_subject_body_attachment()">Send</button>
 </body>
 </html>
