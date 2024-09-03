@@ -1,3 +1,4 @@
+import base64
 from flask import Flask, jsonify, render_template, request
 import fetch_yesterday_count
 import sendemail_service as sendemail_service
@@ -56,7 +57,7 @@ def send_email_by_formdata():
         # Extract file data if provided
         attachment = request.files.get('attachment')  # Extract the file from the form data
         attachment_name = attachment.filename if attachment else None
-        attachment_data = attachment.read() if attachment else None
+        attachment_data = base64.b64encode(attachment.read()).decode('utf-8') if attachment else None
         attachment_mime_type = attachment.mimetype if attachment else None
 
         # Call the email sending service
