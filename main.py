@@ -17,8 +17,10 @@ def send_checktrayCount_email():
     
     reqdata = request.get_json()
     
-    response_data = fetch_yesterday_count.update_check_tray_images_count(reqdata)
+    response_data = fetch_yesterday_count.sendCheckTrayEmailWithTarget(reqdata)
     return jsonify({"message": response_data}),200
+
+
 @app.route('/send_email_by_subject_body_attachment', methods=['POST'])
 def send_email():
     try:

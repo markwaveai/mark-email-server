@@ -31,10 +31,10 @@ def get_formatted_date(input_date_string):
     output_format = '%B %d, %Y'
     # Format the datetime object to the desired output format
     return date_obj.strftime(output_format)
-def get_date_string():
+def get_date_string(previousdDayDelta=1,datformat='%d-%m-%Y'):
     timezone = pytz.timezone('Asia/Kolkata')
-    yesterday = datetime.now(timezone) - timedelta(days=1)
-    return yesterday.strftime('%d-%m-%Y')
+    yesterday = datetime.now(timezone) - timedelta(days=previousdDayDelta)
+    return yesterday.strftime(datformat)
 # Generate Excel File
 def generate_excel_file(data):
     """
@@ -93,9 +93,7 @@ def generate_excel_file(data):
     excel_file.seek(0)
     return excel_file.read()
 def sendCheckTrayImageEmail(total_count,yesterday_count,data,date,req):
-    email_subject = f"Checktray Image Count Report: Total {total_count} as of {get_formatted_date(date)}"
-    get_formatted_date
-    
+    email_subject = f"Checktray Image Count Report: Total {total_count} as of {get_formatted_date(date)}"    
     email_content = f"""
     <p>Dear Team,</p>
     <p>The Checktray image count for yesterday ({get_formatted_date(date)}) is {yesterday_count}. Please find the attached report for more details.</p>
@@ -117,7 +115,24 @@ def sendCheckTrayImageEmail(total_count,yesterday_count,data,date,req):
 
     send_email(email_subject, email_content, recipients,recipientsCC,'developer@nextaqua.in','fjdt wirm nonk ddvm','Checktray_Image_Count_Report.xlsx',excel_attachment,attachemntType)
     #send_email(email_subject, email_content, ['pavan@aquaexchange.com','karthick@aquaexchange.com','kiran@aquaexchange.com'],['satyasri@aquaexchange.com','aditya@infiplus.xyz','rajesh@aquaexchange.com','kranthi@infiplus.xyz'],'developer@nextaqua.in','zdkc wler hovo jclu','Checktray_Image_Count_Report.xlsx',excel_attachment,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    
+def sendCheckTrayImageEmailWithContent(emailContent,total_count,data,date,req):
+    email_subject = f"Checktray Image Count Report: Total {total_count} as of {get_formatted_date(date)}"
+    email_content = emailContent
+    # Generate Excel file
+    recipients = []
+    recipientsCC = None
+    excel_attachment = None#generate_excel_file(data)
+    attachemntType = None #'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+   # print(f"ReqData:{req}")
+    if "isAttchmentReq" in req:
+        excel_attachment = generate_excel_file(data)
+        attachemntType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    if "recipientsCC" in req:
+        recipientsCC = req.get('recipientsCC')
+    if "recipients" in req:
+        recipients = req.get('recipients')
+
+    send_email(email_subject, email_content, recipients,recipientsCC,'developer@nextaqua.in','fjdt wirm nonk ddvm','Checktray_Image_Count_Report.xlsx',excel_attachment,attachemntType)
 def fetch_images(bucket_name, prefix):
     try:
         client = storage.Client()
@@ -165,7 +180,91 @@ def update_check_tray_images_count(req):
     except Exception as e:
         logging.error('Error in update_check_tray_images_count function:', exc_info=True)
         return None
+def fetchImageCountForLast3Days():
+    bucket_name = 'checktray-ml'
+    # Fetch the last 3 days' date strings
+    str_day1 = get_date_string(previousdDayDelta=1)
+    str_day2 = get_date_string(previousdDayDelta=2, datformat='%Y-%m-%d')
+    str_day3 = get_date_string(previousdDayDelta=3, datformat='%Y-%m-%d')
 
+    try:
+        uploaded = fetch_images(bucket_name, f'uploaded/{str_day1}')
+        processed = fetch_images(bucket_name, f'ml/{str_day1}')
+
+        data = {
+            'date': str_day1,
+            'uploadedCount': uploaded.get('totalCount'),
+            'mlCount': processed.get('totalCount')
+        }
+
+        logging.info('Updated checktray images count: %s', data)
+
+        jango_url = 'https://app.aquaexchange.com/api/general/upsertChecktrayImageCount/'
+        jango_api_headers = {"Authorization": "Token e50f000f342fe8453e714454abac13be07f18ac3"}
+        response = requests.post(jango_url, json=data, headers=jango_api_headers)
+        if response.status_code == 200:
+            logging.info('Successfully updated checktray images count in Jango.')
+            responsedata = response.json()
+            dateWiseData = responsedata.get("data", None)
+            day_counts = dateWiseData.get("day_counts", {})
+
+            # Get the last 3 days of checktray images count
+            day2Count = day_counts.get(str_day2, 0)
+            day3Count = day_counts.get(str_day3, 0)
+            totalCount = responsedata.get("total_count")
+
+            # Return the counts for use in projections
+            return (dateWiseData,totalCount, uploaded.get('totalCount', 0), day2Count, day3Count)
+        else:
+            logging.error(f'Failed to update checktray images count in Jango. Status code: {response.status_code}')
+            return None
+
+    except Exception as e:
+        logging.error('Error in update_check_tray_images_count function:', exc_info=True)
+        return None
+
+
+def sendCheckTrayEmailWithTarget(req=None):
+    try:
+        total_target_images=1_000_000
+        if "yearTarget" in req:
+            total_target_images = req.get("yearTarget",1_000_000)
+        str_date = get_date_string(previousdDayDelta=1)
+        result = fetchImageCountForLast3Days()
+        if not result:
+            logging.error("No result from fetchImageCountForLast3Days")
+            return None
+        responsedata,totalCount, day1count, day2Count, day3Count = result
+        # Calculate remaining days dynamically from today to the end of the year
+        timezone = pytz.timezone('Asia/Kolkata')
+        today = datetime.now(timezone).date()
+        year_end = datetime(today.year, 12, 31).date()
+        total_days_remaining = (year_end - today).days+1  # Days remaining until the end of the year
+        # Calculate the last 3 days' total and average
+        last_3_days_total = day1count + day2Count + day3Count
+        average_last_3_days = last_3_days_total / 3  # Average images per day for the last 3 days
+        # Project future counts based on the average of the last 3 days
+        projected_additional_images = average_last_3_days * total_days_remaining
+        total_projected_images_by_year_end = totalCount + projected_additional_images
+        # Calculate the daily average needed to reach 1 million images
+        images_needed_to_reach_target = total_target_images - totalCount
+        required_daily_average = images_needed_to_reach_target / total_days_remaining
+        # Prepare the message content
+        email_content = f"""
+        <p>Dear Team,</p>
+        <p>The Checktray image count for yesterday ({get_formatted_date(today.strftime('%d-%m-%Y'))}) is {day1count}.</p>
+        <p>As per the calculations, the last 3 days' average is {int(average_last_3_days)} images/day.</p>
+        <p>At this rate, we will receive {int(projected_additional_images):,} more images by year-end, totalling {int(total_projected_images_by_year_end):,}.</p>
+        <p>To reach the 1 million target, we need to average {int(required_daily_average):,} images/day for the remaining {total_days_remaining} days.</p>
+        <p>Best regards,<br>Backend Team</p>
+        """
+        sendCheckTrayImageEmail(email_content,totalCount,responsedata,str_date,req) 
+        return email_content
+    except Exception as e:
+        logging.error('Error in calculate_projections_and_update_message function:', exc_info=True)
+        return None
+
+# calculate_projections_and_update_message()
 # Run the function
 # if __name__ == '__main__':
 #    update_check_tray_images_count()
