@@ -258,7 +258,7 @@ def sendCheckTrayEmailWithTarget(req=None):
         <p>To reach the 1 million target, we need to average {int(required_daily_average):,} images/day for the remaining {total_days_remaining} days.</p>
         <p>Best regards,<br>Backend Team</p>
         """
-        sendCheckTrayImageEmail(email_content,totalCount,responsedata,str_date,req) 
+        sendCheckTrayImageEmailWithContent(email_content,totalCount,responsedata,str_date,req) 
         return email_content
     except Exception as e:
         logging.error('Error in calculate_projections_and_update_message function:', exc_info=True)
