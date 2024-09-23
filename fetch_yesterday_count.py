@@ -253,9 +253,8 @@ def sendCheckTrayEmailWithTarget(req=None):
         email_content = f"""
         <p>Dear Team,</p>
         <p>The Checktray image count for yesterday ({get_formatted_date(today.strftime('%d-%m-%Y'))}) is {day1count}.</p>
-        <p>As per the calculations, the last 3 days' average is {int(average_last_3_days)} images/day.</p>
-        <p>At this rate, we will receive {int(projected_additional_images):,} more images by year-end, totalling {int(total_projected_images_by_year_end):,}.</p>
-        <p>To reach the 1 million target, we need to average {int(required_daily_average):,} images/day for the remaining {total_days_remaining} days.</p>
+        <p>As per the calculations, the last 3 day's average is {int(average_last_3_days)} images/day. At this rate, we will receive {int(projected_additional_images):,} more images by year-end({get_formatted_date(year_end.strftime('%d-%m-%Y'))}), totalling {int(total_projected_images_by_year_end):,}.
+        To reach the 1 million target, we need to average {int(required_daily_average):,} images/day for the remaining {total_days_remaining} days.</p>
         <p>Best regards,<br>Backend Team</p>
         """
         sendCheckTrayImageEmailWithContent(email_content,totalCount,responsedata,str_date,req) 
@@ -268,3 +267,8 @@ def sendCheckTrayEmailWithTarget(req=None):
 # Run the function
 # if __name__ == '__main__':
 #    update_check_tray_images_count()
+# sendCheckTrayEmailWithTarget(req={
+#             "isAttchmentReq":True, 
+#             "recipients":["rajesh@aquaexchange.com"],
+#             "recipientsCC" : ["rajesh@aquaexchange.com"]
+# })
