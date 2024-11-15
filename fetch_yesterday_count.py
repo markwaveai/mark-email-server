@@ -113,7 +113,7 @@ def sendCheckTrayImageEmail(total_count,yesterday_count,data,date,req):
     if "recipients" in req:
         recipients = req.get('recipients')
 
-    send_email(email_subject, email_content, recipients,recipientsCC,'developer@nextaqua.in','fjdt wirm nonk ddvm','Checktray_Image_Count_Report.xlsx',excel_attachment,attachemntType)
+    send_email(email_subject, email_content, recipients,recipientsCC,'developer@nextaqua.in','gvbe bghv qvbt gxqk','Checktray_Image_Count_Report.xlsx',excel_attachment,attachemntType)
     #send_email(email_subject, email_content, ['pavan@aquaexchange.com','karthick@aquaexchange.com','kiran@aquaexchange.com'],['satyasri@aquaexchange.com','aditya@infiplus.xyz','rajesh@aquaexchange.com','kranthi@infiplus.xyz'],'developer@nextaqua.in','zdkc wler hovo jclu','Checktray_Image_Count_Report.xlsx',excel_attachment,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 def sendCheckTrayImageEmailWithContent(emailContent,total_count,data,date,req):
     email_subject = f"Checktray Image Count Report: Total {total_count} as of {get_formatted_date(date)}"
@@ -132,7 +132,7 @@ def sendCheckTrayImageEmailWithContent(emailContent,total_count,data,date,req):
     if "recipients" in req:
         recipients = req.get('recipients')
 
-    send_email(email_subject, email_content, recipients,recipientsCC,'developer@nextaqua.in','fjdt wirm nonk ddvm','Checktray_Image_Count_Report.xlsx',excel_attachment,attachemntType)
+    send_email(email_subject, email_content, recipients,recipientsCC,'developer@nextaqua.in','gvbe bghv qvbt gxqk','Checktray_Image_Count_Report.xlsx',excel_attachment,attachemntType)
 def fetch_images(bucket_name, prefix):
     try:
         client = storage.Client()
@@ -267,8 +267,8 @@ def sendCheckTrayEmailWithTarget(req=None):
 # Run the function
 # if __name__ == '__main__':
 #    update_check_tray_images_count()
-# sendCheckTrayEmailWithTarget(req={
-#             "isAttchmentReq":True, 
-#             "recipients":["rajesh@aquaexchange.com"],
-#             "recipientsCC" : ["rajesh@aquaexchange.com"]
-# })
+sendCheckTrayEmailWithTarget(req={
+            "isAttchmentReq":True, 
+            "recipients":["rajesh@rajesh.com"],
+            "recipientsCC" : ["rajesh@rajesh.com"]
+})
