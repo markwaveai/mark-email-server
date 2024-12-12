@@ -5,5 +5,6 @@ google-cloud-storage
 pandas
 openpyxl
 gunicorn
+firebase_admin
 
 
