@@ -8,11 +8,9 @@ from collections import defaultdict
 import pandas as pd
 from io import BytesIO
 from sendemail import send_email  # Import BytesIO to handle in-memory file
-import firebase_admin
 if os.getenv('GAE_ENV', '').startswith('standard'):
     # Running on App Engine or Cloud Run
     print('Running on App Engine or Cloud Run',flush=True)
-    firebase_admin.initialize_app()
     storage_client = storage.Client()
 else:
     # Path to your service account key file
