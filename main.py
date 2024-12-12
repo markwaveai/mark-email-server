@@ -26,7 +26,6 @@ def send_email():
     try:
         if not request.is_json:
             return jsonify({"error": "Request body must be JSON"}), 400
-        
         reqdata = request.get_json()
         subject = reqdata.get('subject',"***subject***")
         msgbody = reqdata.get('msgbody',"***subject***")

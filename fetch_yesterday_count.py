@@ -2,23 +2,12 @@ from datetime import datetime, timedelta
 import pytz
 import requests
 import logging
-import json
 from google.cloud import storage
 import os
 from collections import defaultdict
 import pandas as pd
 from io import BytesIO
-
 from sendemail import send_email  # Import BytesIO to handle in-memory file
-
-# Path to your service account key file
-service_account_key_path = 'nextaqua-firestore-key.json'
-
-# Set the environment variable to specify the service account key file
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = service_account_key_path
-
-# Initialize a client
-storage_client = storage.Client()
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -265,10 +254,10 @@ def sendCheckTrayEmailWithTarget(req=None):
 
 # calculate_projections_and_update_message()
 # Run the function
-# if __name__ == '__main__':
+if __name__ == '__main__':
 #    update_check_tray_images_count()
-sendCheckTrayEmailWithTarget(req={
-            "isAttchmentReq":True, 
-            "recipients":["rajesh@rajesh.com"],
-            "recipientsCC" : ["rajesh@rajesh.com"]
-})
+    sendCheckTrayEmailWithTarget(req={
+                "isAttchmentReq":True, 
+                "recipients":["rajesh@rajesh.com"],
+                "recipientsCC" : ["rajesh@rajesh.com"]
+    })

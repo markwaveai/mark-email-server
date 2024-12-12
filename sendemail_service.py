@@ -57,7 +57,6 @@ def api_send_email():
     attachment_name = data.get('attachment_name')
     attachment_data = data.get('attachment_data')  # Base64 encoded string
     attachment_type = data.get('attachment_type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-
     result = send_email(subject, body, to_emails, cc_emails, from_email, appPassword, attachment_name, attachment_data, attachment_type)
     return jsonify({'result': result})
 
