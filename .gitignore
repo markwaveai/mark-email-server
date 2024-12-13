@@ -1,4 +1,4 @@
-__pycache__/*.*
+__pycache__/*.pyc
 __pycache__/sendemail_service.cpython-312.pyc
 __pycache__/fetch_yesterday_count.cpython-312.pyc
 __pycache__/sendemail_service.cpython-312.pyc
