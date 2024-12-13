@@ -35,8 +35,8 @@ def send_email():
         msgbody = reqdata.get('msgbody',"***subject***")
         to_emails = reqdata.get('to_emails',None)
         cc_emails = reqdata.get('cc_emails',None)
-        from_email = reqdata.get('from_email', os.getenv('emailaccount'))
-        app_password = reqdata.get('app_password', os.getenv('app_password'))
+        from_email = os.getenv('emailaccount')#reqdata.get('from_email', os.getenv('emailaccount'))
+        app_password =  os.getenv('app_password')#reqdata.get('app_password', os.getenv('app_password'))
         attachment_name=reqdata.get('attachment_name',None)
         attachment_data=reqdata.get('attachment_data',None)
         attachment_mime_type=reqdata.get('attachment_mime_type',None)
@@ -56,9 +56,10 @@ def send_email_by_formdata():
         msgbody = request.form.get('msgbody', "***msgbody***")
         to_emails = request.form.getlist('to_emails')  # Assuming multiple emails can be provided
         cc_emails = request.form.getlist('cc_emails')  # Assuming multiple emails can be provided
-        from_email = request.form.get('from_email', 'developer@nextaqua.in')
-        app_password = request.form.get('app_password', 'gvbe bghv qvbt gxqk')
-
+        # from_email = request.form.get('from_email', 'developer@nextaqua.in')
+        # app_password = request.form.get('app_password', 'gvbe bghv qvbt gxqk')
+        from_email = os.getenv('emailaccount')#reqdata.get('from_email', os.getenv('emailaccount'))
+        app_password =  os.getenv('app_password')#reqdata.get('app_password', os.getenv('app_password'))
         # Extract file data if provided
         attachment = request.files.get('attachment')  # Extract the file from the form data
         attachment_name = attachment.filename if attachment else None
