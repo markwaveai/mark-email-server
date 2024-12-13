@@ -9,6 +9,11 @@ import pandas as pd
 from io import BytesIO
 from sendemail import send_email  # Import BytesIO to handle in-memory file
 import firebase_admin
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
 if os.getenv('GAE_ENV', '').startswith('standard'):
     # Running on App Engine or Cloud Run
     print('Running on App Engine or Cloud Run',flush=True)
@@ -114,7 +119,7 @@ def sendCheckTrayImageEmail(total_count,yesterday_count,data,date,req):
     if "recipients" in req:
         recipients = req.get('recipients')
 
-    send_email(email_subject, email_content, recipients,recipientsCC,'developer@nextaqua.in','gvbe bghv qvbt gxqk','Checktray_Image_Count_Report.xlsx',excel_attachment,attachemntType)
+    send_email(email_subject, email_content, recipients,recipientsCC,os.getenv('emailaccount'), os.getenv('app_password'),'Checktray_Image_Count_Report.xlsx',excel_attachment,attachemntType)
     #send_email(email_subject, email_content, ['pavan@aquaexchange.com','karthick@aquaexchange.com','kiran@aquaexchange.com'],['satyasri@aquaexchange.com','aditya@infiplus.xyz','rajesh@aquaexchange.com','kranthi@infiplus.xyz'],'developer@nextaqua.in','zdkc wler hovo jclu','Checktray_Image_Count_Report.xlsx',excel_attachment,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 def sendCheckTrayImageEmailWithContent(emailContent,total_count,data,date,req):
     email_subject = f"Checktray Image Count Report: Total {total_count} as of {get_formatted_date(date)}"
@@ -133,7 +138,7 @@ def sendCheckTrayImageEmailWithContent(emailContent,total_count,data,date,req):
     if "recipients" in req:
         recipients = req.get('recipients')
 
-    send_email(email_subject, email_content, recipients,recipientsCC,'developer@nextaqua.in','gvbe bghv qvbt gxqk','Checktray_Image_Count_Report.xlsx',excel_attachment,attachemntType)
+    send_email(email_subject, email_content, recipients,recipientsCC,os.getenv('emailaccount'), os.getenv('app_password'),'Checktray_Image_Count_Report.xlsx',excel_attachment,attachemntType)
 def fetch_images(bucket_name, prefix):
     try:
         client = storage.Client()

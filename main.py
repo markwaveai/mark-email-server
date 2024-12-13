@@ -3,6 +3,11 @@ from flask import Flask, jsonify, render_template, request
 import fetch_yesterday_count
 import sendemail_service as sendemail_service
 #import updatefeedbubbles
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -30,8 +35,8 @@ def send_email():
         msgbody = reqdata.get('msgbody',"***subject***")
         to_emails = reqdata.get('to_emails',None)
         cc_emails = reqdata.get('cc_emails',None)
-        from_email = reqdata.get('from_email','developer@nextaqua.in')
-        app_password = reqdata.get('app_password','gvbe bghv qvbt gxqk')
+        from_email = reqdata.get('from_email', os.getenv('emailaccount'))
+        app_password = reqdata.get('app_password', os.getenv('app_password'))
         attachment_name=reqdata.get('attachment_name',None)
         attachment_data=reqdata.get('attachment_data',None)
         attachment_mime_type=reqdata.get('attachment_mime_type',None)

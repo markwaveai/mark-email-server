@@ -6,5 +6,4 @@ pandas
 openpyxl
 gunicorn
 firebase_admin
-
-
+python-dotenv
