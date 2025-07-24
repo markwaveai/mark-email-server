@@ -2,6 +2,7 @@ import base64
 from flask import Flask, jsonify, render_template, request
 import fetch_yesterday_count
 import sendemail_service as sendemail_service
+from draft_email_api import draft_email_bp
 #import updatefeedbubbles
 from dotenv import load_dotenv
 import os
@@ -10,6 +11,9 @@ import os
 load_dotenv()
 
 app = Flask(__name__)
+
+# Register the draft email blueprint
+app.register_blueprint(draft_email_bp, url_prefix='/api')
 
 @app.route('/')
 def index():
