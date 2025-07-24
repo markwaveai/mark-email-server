@@ -2,7 +2,7 @@ import base64
 from flask import Flask, jsonify, render_template, request
 import fetch_yesterday_count
 import sendemail_service as sendemail_service
-from draft_email_api import draft_email_bp
+#from draft_email_api import draft_email_bp
 #import updatefeedbubbles
 from dotenv import load_dotenv
 import os
