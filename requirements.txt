@@ -2,6 +2,7 @@ Flask
 pytz
 requests
 google-cloud-storage
+numpy<2.0.0
 pandas
 openpyxl
 gunicorn
