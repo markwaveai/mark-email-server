@@ -100,14 +100,13 @@ def send_email_by_multiple_attachments():
         # Handle multiple attachments
         attachments = []
         for file_key in request.files:
-            if file_key.startswith('attachment'):
-                attachment = request.files[file_key]
-                if attachment and attachment.filename:
-                    attachments.append({
-                        'name': attachment.filename,
-                        'data': base64.b64encode(attachment.read()).decode('utf-8'),
-                        'type': attachment.mimetype or 'application/octet-stream'
-                    })
+            attachment = request.files[file_key]
+            if attachment and attachment.filename:
+                attachments.append({
+                    'name': attachment.filename,
+                    'data': base64.b64encode(attachment.read()).decode('utf-8'),
+                    'type': attachment.mimetype or 'application/octet-stream'
+                })
         
         # Call the email sending service
         response, isSent = sendemail_service.send_email_with_attachments(
