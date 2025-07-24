@@ -12,7 +12,54 @@ import os
 load_dotenv()
 
 app = Flask(__name__)
+def send_email_with_attachments(subject, body, to_emails, cc_emails=None, from_email=None, appPassword=None, attachments=None, attachment_name=None, attachment_data=None, attachment_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'):
+    # Create the multipart message
+    msg = MIMEMultipart()
+    msg['From'] = from_email
+    msg['To'] = ", ".join(to_emails)  # Join the list of emails into a single string
 
+    if cc_emails:
+        msg['Cc'] = ", ".join(cc_emails)  # Join the list of CC emails into a single string
+        to_emails += cc_emails  # Include CC emails in the recipients list
+
+    msg['Subject'] = subject
+
+    # Attach the body with the msg instance
+    msg.attach(MIMEText(body, 'html'))
+
+    # Handle multiple attachments if provided
+    if attachments and isinstance(attachments, list):
+        for attachment in attachments:
+            if attachment.get('data') and attachment.get('name'):
+                part = MIMEBase(
+                    attachment.get('type', 'application/octet-stream').split('/')[0],
+                    attachment.get('type', 'application/octet-stream').split('/')[1]
+                )
+                part.set_payload(base64.b64decode(attachment.get('data')))
+                encoders.encode_base64(part)
+                part.add_header('Content-Disposition', f'attachment; filename={attachment.get("name")}')
+                msg.attach(part)
+    # Handle single attachment (legacy support)
+    elif attachment_data and attachment_name:
+        part = MIMEBase(attachment_type.split('/')[0], attachment_type.split('/')[1])
+        part.set_payload(base64.b64decode(attachment_data))
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', f'attachment; filename={attachment_name}')
+        msg.attach(part)
+
+    # Send the email
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(from_email, appPassword)
+        text = msg.as_string()
+        server.sendmail(from_email, to_emails, text)
+        server.quit()
+        print("Email sent successfully")
+        return "Email sent successfully", True
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+        return f"Failed to send email: {e}", False
 def send_email(subject, body, to_emails, cc_emails=None, from_email=None, appPassword=None, attachment_name=None, attachment_data=None, attachment_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'):
     # Create the multipart message
     msg = MIMEMultipart()

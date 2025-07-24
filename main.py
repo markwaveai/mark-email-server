@@ -13,7 +13,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # Register the draft email blueprint
-app.register_blueprint(draft_email_bp, url_prefix='/api')
+# app.register_blueprint(draft_email_bp, url_prefix='/api')
 
 @app.route('/')
 def index():
@@ -86,7 +86,43 @@ def send_email_by_formdata():
             return jsonify({"error": response}), 500
     except Exception as e:
         return jsonify({"error": f"Error sending email: {str(e)}"}), 500   
+@app.route('/send_email_by_multiple_attachments', methods=['POST'])
+def send_email_by_multiple_attachments():
+    try:
+        # Extract data from form fields
+        subject = request.form.get('subject', "***subject***")
+        msgbody = request.form.get('msgbody', "***msgbody***")
+        to_emails = request.form.getlist('to_emails')  # Assuming multiple emails can be provided
+        cc_emails = request.form.getlist('cc_emails')  # Assuming multiple emails can be provided
+        from_email = os.getenv('emailaccount')
+        app_password = os.getenv('app_password')
+        
+        # Handle multiple attachments
+        attachments = []
+        for file_key in request.files:
+            if file_key.startswith('attachment'):
+                attachment = request.files[file_key]
+                if attachment and attachment.filename:
+                    attachments.append({
+                        'name': attachment.filename,
+                        'data': base64.b64encode(attachment.read()).decode('utf-8'),
+                        'type': attachment.mimetype or 'application/octet-stream'
+                    })
+        
+        # Call the email sending service
+        response, isSent = sendemail_service.send_email_with_attachments(
+            subject, msgbody, to_emails, cc_emails, 
+            from_email=from_email, appPassword=app_password,
+            attachments=attachments if attachments else None
+        )
 
+        # Return the appropriate response
+        if isSent:
+            return jsonify({"message": response}), 200
+        else:
+            return jsonify({"error": response}), 500
+    except Exception as e:
+        return jsonify({"error": f"Error sending email: {str(e)}"}), 500
 # @app.route('/notify_day_feed_bubble', methods=['POST'])
 # def notifyDayFeedBubble():
 #     print("calling...notifyDayFeedBubble")

@@ -1,3 +1,2 @@
-__pycache__/*.pyc
+__pycache__/*.*
 .env
-__pycache__/fetch_yesterday_count.cpython-312.pyc
