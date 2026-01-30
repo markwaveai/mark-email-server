@@ -5,7 +5,6 @@ from typing import List, Optional, Dict, Any
 from fastapi import FastAPI, Request, Form, File, UploadFile, HTTPException, Depends, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, HTMLResponse
-from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
@@ -32,8 +31,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Setup templates
-templates = Jinja2Templates(directory="templates")
+
 
 # Pydantic models for request bodies
 class EmailRequest(BaseModel):
@@ -47,29 +45,13 @@ class EmailRequest(BaseModel):
     attachment_data: Optional[str] = Field(default=None, description="Base64 encoded content of the attachment")
     attachment_mime_type: Optional[str] = Field(default=None, description="MIME type of the attachment")
 
-@app.get("/", response_class=HTMLResponse, tags=["UI"])
-async def index(request: Request):
+@app.get("/", tags=["Health"])
+async def ping():
     """
-    Serves the main HTML page for the Email Service.
+    Health check endpoint.
     """
-    return templates.TemplateResponse("index.html", {"request": request})
+    return JSONResponse(content={"status": "ok", "message": "Service is running"}, status_code=200)
 
-@app.post("/send_checktrayCount_email", tags=["Specialized"])
-async def send_checktrayCount_email(request: Request):
-    """
-    Endpoint to send check tray count emails.
-    
-    **Note**: This endpoint currently relies on a missing module `fetch_yesterday_count` and will return an error or mock response.
-    """
-    try:
-        reqdata = await request.json()
-    except Exception:
-        return JSONResponse(content={"error": "Request body must be JSON"}, status_code=400)
-    
-    # We assume fetch_yesterday_count works as imported
-    # response_data = fetch_yesterday_count.sendCheckTrayEmailWithTarget(reqdata)
-    response_data = "Functionality unavailable: fetch_yesterday_count module missing."
-    return JSONResponse(content={"message": response_data}, status_code=200)
 
 @app.post("/send_email_by_subject_body_attachment", tags=["Email"], response_model=Dict[str, Any])
 async def send_email(reqdata: EmailRequest):

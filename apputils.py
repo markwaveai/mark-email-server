@@ -118,37 +118,4 @@ def check_date_isToday(date, date_format='%d-%m-%Y'):
     return date_time == today
 
 
-                 
-class TableTypes(Enum):
-    CROP_TABLE = "cropTable"
-    STOCKING_TABLE = "stockingTable"
-    SHIFTING_TABLE = "shiftingTable"
-    FEED_TABLE = "feedtable"
-    CHECK_TRAY = "checkTray"
-    NETTING_TABLE = "nettingTable"
-    HARVEST_TABLE = "harvestTable"
-    WATER_REMAINDER = "WaterRemainder"
-    FEED_REMAINDER = "FeedRemainder"
-    MEAL_TABLE = "mealTable"
-    PRO_BREW_TABLE = "proBrewTable"
-    WEIGHING_MACHINE_TABLE = "weighingMachineTable"
-    IMAGE = "Image"
-    VIDEO = "Video"
-    DOCUMENT = "Document"
-    SCHEDULE = "Schedule"
-    FEED_SCHEDULE = "feed_schedule"
-    MEAL_TIMING_TABLE = "mealTimingTable"
-    CHECKTRAY_TIMING_TABLE = "checktrayTimingTable"
-    REPORT_COMMENT = "reportComment"
-    NEXT_MEAL_ALERT = "nextMealAlert"
-    INSTRUCTIONS = "Instructions"
-    PH_TABLE = "phtable"
-    DO_TABLE = "dotable"
-    CHECKTRAY_CHANGE = "checkTray_change"
-    VERIFIED_FEED = "verified_feed"
-    CHECKTRAY_REPLY = "checktray_reply"
-    FEED_VERIFICATION = "feed_verification"
-    SMART_SCALE_WEIGHING_TABLE = "smartScaleWeighingTable"
-    AQUABOT = "aquabotTable"
-    WATER_PARAMETER = "WaterParameter"
-    DAY_FEED_TABLE = "dayfeedtable"
+ 
