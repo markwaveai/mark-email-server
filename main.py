@@ -1,76 +1,106 @@
 import base64
-from flask import Flask, jsonify, render_template, request
-import fetch_yesterday_count
-import sendemail_service as sendemail_service
-#from draft_email_api import draft_email_bp
-#import updatefeedbubbles
-from dotenv import load_dotenv
 import os
+import json
+from typing import List, Optional, Dict, Any
+from fastapi import FastAPI, Request, Form, File, UploadFile, HTTPException, Depends
+from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+from dotenv import load_dotenv
+
+# Assuming these modules exist in the path
+import sendemail_service
 
 # Load environment variables
 load_dotenv()
 
-app = Flask(__name__)
+app = FastAPI()
 
-# Register the draft email blueprint
-# app.register_blueprint(draft_email_bp, url_prefix='/api')
+# Setup templates
+templates = Jinja2Templates(directory="templates")
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+# Pydantic models for request bodies
+class EmailRequest(BaseModel):
+    subject: str = "***subject***"
+    msgbody: str = "***subject***" 
+    to_emails: Optional[List[str]] = None
+    cc_emails: Optional[List[str]] = None
+    from_email: Optional[str] = None
+    app_password: Optional[str] = None
+    attachment_name: Optional[str] = None
+    attachment_data: Optional[str] = None
+    attachment_mime_type: Optional[str] = None
 
-@app.route('/send_checktrayCount_email', methods=['POST'])
-def send_checktrayCount_email():
-    if not request.is_json:
-        return jsonify({"error": "Request body must be JSON"}), 400
-    
-    reqdata = request.get_json()
-    response_data = fetch_yesterday_count.sendCheckTrayEmailWithTarget(reqdata)
-    return jsonify({"message": response_data}),200
+@app.get("/", response_class=HTMLResponse)
+async def index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
-
-@app.route('/send_email_by_subject_body_attachment', methods=['POST'])
-def send_email():
+@app.post("/send_checktrayCount_email")
+async def send_checktrayCount_email(request: Request):
     try:
-        if not request.is_json:
-            return jsonify({"error": "Request body must be JSON"}), 400
-        reqdata = request.get_json()
-        subject = reqdata.get('subject',"***subject***")
-        msgbody = reqdata.get('msgbody',"***subject***")
-        to_emails = reqdata.get('to_emails',None)
-        cc_emails = reqdata.get('cc_emails',None)
-        from_email = os.getenv('emailaccount')#reqdata.get('from_email', os.getenv('emailaccount'))
-        app_password =  os.getenv('app_password')#reqdata.get('app_password', os.getenv('app_password'))
-        attachment_name=reqdata.get('attachment_name',None)
-        attachment_data=reqdata.get('attachment_data',None)
-        attachment_mime_type=reqdata.get('attachment_mime_type',None)
-        response,isSent=sendemail_service.send_email(subject,msgbody,to_emails,cc_emails,from_email=from_email,appPassword=app_password,
-                                    attachment_name=attachment_name,attachment_data=attachment_data,attachment_type=attachment_mime_type)
-        if isSent:
-           return jsonify({"message": response}),200
-        else:
-           return jsonify({"error": response}),500
+        reqdata = await request.json()
     except Exception:
-            return jsonify({"error": "Error sending email"}), 500
-@app.route('/send_email_by_formdata', methods=['POST'])
-def send_email_by_formdata():
-    try:
-        # Extract data from form fields
-        subject = request.form.get('subject', "***subject***")
-        msgbody = request.form.get('msgbody', "***msgbody***")
-        to_emails = request.form.getlist('to_emails')  # Assuming multiple emails can be provided
-        cc_emails = request.form.getlist('cc_emails')  # Assuming multiple emails can be provided
-        # from_email = request.form.get('from_email', 'developer@nextaqua.in')
-        # app_password = request.form.get('app_password', 'gvbe bghv qvbt gxqk')
-        from_email = os.getenv('emailaccount')#reqdata.get('from_email', os.getenv('emailaccount'))
-        app_password =  os.getenv('app_password')#reqdata.get('app_password', os.getenv('app_password'))
-        # Extract file data if provided
-        attachment = request.files.get('attachment')  # Extract the file from the form data
-        attachment_name = attachment.filename if attachment else None
-        attachment_data = base64.b64encode(attachment.read()).decode('utf-8') if attachment else None
-        attachment_mime_type = attachment.mimetype if attachment else None
+        return JSONResponse(content={"error": "Request body must be JSON"}, status_code=400)
+    
+    # We assume fetch_yesterday_count works as imported
+    response_data = fetch_yesterday_count.sendCheckTrayEmailWithTarget(reqdata)
+    return JSONResponse(content={"message": response_data}, status_code=200)
 
-        # Call the email sending service
+@app.post("/send_email_by_subject_body_attachment")
+async def send_email(reqdata: EmailRequest):
+    try:
+        subject = reqdata.subject
+        msgbody = reqdata.msgbody
+        to_emails = reqdata.to_emails
+        cc_emails = reqdata.cc_emails
+        
+        # Logic from original
+        from_email = os.getenv('emailaccount')
+        app_password = os.getenv('app_password')
+        
+        attachment_name = reqdata.attachment_name
+        attachment_data = reqdata.attachment_data
+        attachment_mime_type = reqdata.attachment_mime_type
+
+        response, isSent = sendemail_service.send_email(
+            subject, msgbody, to_emails, cc_emails, 
+            from_email=from_email, appPassword=app_password,
+            attachment_name=attachment_name, 
+            attachment_data=attachment_data, 
+            attachment_type=attachment_mime_type
+        )
+        
+        if isSent:
+           return JSONResponse(content={"message": response}, status_code=200)
+        else:
+           return JSONResponse(content={"error": response}, status_code=500)
+    except Exception:
+        # Generic error fallback
+        return JSONResponse(content={"error": "Error sending email"}, status_code=500)
+
+@app.post("/send_email_by_formdata")
+async def send_email_by_formdata(
+    subject: str = Form("***subject***"),
+    msgbody: str = Form("***msgbody***"),
+    to_emails: List[str] = Form(default=[]), 
+    cc_emails: List[str] = Form(default=[]),
+    attachment: Optional[UploadFile] = File(None)
+):
+    try:
+        from_email = os.getenv('emailaccount')
+        app_password = os.getenv('app_password')
+        
+        attachment_name = None
+        attachment_data = None
+        attachment_mime_type = None
+
+        if attachment:
+            attachment_name = attachment.filename
+            content = await attachment.read()
+            attachment_data = base64.b64encode(content).decode('utf-8')
+            attachment_mime_type = attachment.content_type
+
         response, isSent = sendemail_service.send_email(
             subject, msgbody, to_emails, cc_emails, 
             from_email=from_email, appPassword=app_password,
@@ -79,60 +109,52 @@ def send_email_by_formdata():
             attachment_type=attachment_mime_type
         )
 
-        # Return the appropriate response
         if isSent:
-            return jsonify({"message": response}), 200
+            return JSONResponse(content={"message": response}, status_code=200)
         else:
-            return jsonify({"error": response}), 500
+            return JSONResponse(content={"error": response}, status_code=500)
     except Exception as e:
-        return jsonify({"error": f"Error sending email: {str(e)}"}), 500   
-@app.route('/send_email_by_multiple_attachments', methods=['POST'])
-def send_email_by_multiple_attachments():
+        return JSONResponse(content={"error": f"Error sending email: {str(e)}"}, status_code=500)
+
+@app.post("/send_email_by_multiple_attachments")
+async def send_email_by_multiple_attachments(request: Request):
     try:
-        # Extract data from form fields
-        subject = request.form.get('subject', "***subject***")
-        msgbody = request.form.get('msgbody', "***msgbody***")
-        to_emails = request.form.getlist('to_emails')  # Assuming multiple emails can be provided
-        cc_emails = request.form.getlist('cc_emails')  # Assuming multiple emails can be provided
+        # Access form data directly to handle arbitrary file keys and lists
+        form = await request.form()
+        
+        subject = form.get('subject', "***subject***")
+        msgbody = form.get('msgbody', "***msgbody***")
+        to_emails = form.getlist('to_emails')
+        cc_emails = form.getlist('cc_emails')
+        
         from_email = os.getenv('emailaccount')
         app_password = os.getenv('app_password')
         
-        # Handle multiple attachments
         attachments = []
-        for file_key in request.files:
-            attachment = request.files[file_key]
-            if attachment and attachment.filename:
-                attachments.append({
-                    'name': attachment.filename,
-                    'data': base64.b64encode(attachment.read()).decode('utf-8'),
-                    'type': attachment.mimetype or 'application/octet-stream'
-                })
+        for key, value in form.items():
+            if isinstance(value, UploadFile):
+                attachment = value
+                if attachment.filename:
+                    content = await attachment.read()
+                    attachments.append({
+                        'name': attachment.filename,
+                        'data': base64.b64encode(content).decode('utf-8'),
+                        'type': attachment.content_type or 'application/octet-stream'
+                    })
         
-        # Call the email sending service
         response, isSent = sendemail_service.send_email_with_attachments(
             subject, msgbody, to_emails, cc_emails, 
             from_email=from_email, appPassword=app_password,
             attachments=attachments if attachments else None
         )
 
-        # Return the appropriate response
         if isSent:
-            return jsonify({"message": response}), 200
+            return JSONResponse(content={"message": response}, status_code=200)
         else:
-            return jsonify({"error": response}), 500
+            return JSONResponse(content={"error": response}, status_code=500)
     except Exception as e:
-        return jsonify({"error": f"Error sending email: {str(e)}"}), 500
-# @app.route('/notify_day_feed_bubble', methods=['POST'])
-# def notifyDayFeedBubble():
-#     print("calling...notifyDayFeedBubble")
-#     if not request.is_json:
-#         return jsonify({"error": "Request body must be JSON"}), 400
-#     reqdata = request.get_json()
-#     response = {}
-#     for site in reqdata:
-#         result = updatefeedbubbles.notifyFeedBubbleForSite(site)
-#         response[site] = result
-#     return jsonify(response),200
+        return JSONResponse(content={"error": f"Error sending email: {str(e)}"}, status_code=500)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=5000)

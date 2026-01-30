@@ -1,1 +1,1 @@
-gunicorn --reload --log-level debug -b 127.0.0.1:8080 main:app
+uvicorn main:app --reload --host 127.0.0.1 --port 8080

@@ -1,10 +1,12 @@
-Flask
+fastapi
+uvicorn
+python-multipart
 pytz
 requests
 google-cloud-storage
 numpy<2.0.0
 pandas
 openpyxl
-gunicorn
 firebase_admin
 python-dotenv
+jinja2
