@@ -10,3 +10,4 @@ openpyxl
 firebase_admin
 python-dotenv
 jinja2
+gunicorn

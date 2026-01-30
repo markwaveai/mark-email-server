@@ -3,6 +3,7 @@ import os
 import json
 from typing import List, Optional, Dict, Any
 from fastapi import FastAPI, Request, Form, File, UploadFile, HTTPException, Depends, Body
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -15,13 +16,20 @@ import sendemail_service
 
 # Load environment variables
 load_dotenv()
-#cors
 app = FastAPI(
     title="Email Service API",
     description="API for sending emails with various configurations including attachments, form data, and HTML bodies.",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Setup templates
