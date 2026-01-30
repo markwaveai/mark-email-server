@@ -15,7 +15,7 @@ import sendemail_service
 
 # Load environment variables
 load_dotenv()
-
+#cors
 app = FastAPI(
     title="Email Service API",
     description="API for sending emails with various configurations including attachments, form data, and HTML bodies.",
